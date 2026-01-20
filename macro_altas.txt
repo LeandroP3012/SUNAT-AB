@@ -1,0 +1,70 @@
+Sub GenerarArchivoAlta_Final()
+    Dim RUC As String
+    Dim Ruta As String
+    Dim Linea As String
+    Dim UltimaFila As Long, i As Long
+    Dim TD As String, NumDoc As String, Pais As String
+    Dim Categoria As String, TRegistro As String
+    Dim FInicio As String
+    Dim EPS As String
+    
+    ' --- CONFIGURACIÓN ---
+    ' Cambia esto por la celda donde tengas el RUC o escríbelo directo
+    RUC = "20100089051"
+    
+    ' Nombre del archivo según norma SUNAT: RP_RUC.per
+    Ruta = ThisWorkbook.Path & "\RP_" & RUC & ".per"
+    
+    ' Detectar última fila con datos en la hoja activa
+    UltimaFila = Range("A" & Rows.Count).End(xlUp).Row
+    
+    ' Crear el archivo de texto
+    Open Ruta For Output As #1
+    
+    ' Bucle desde la fila 2 hasta el final
+    For i = 2 To UltimaFila
+        
+        ' 1. Obtener datos de las celdas
+        TD = Cells(i, 1).Value       ' Col A: Tipo Doc (01=DNI, 04=CE, 07=Pasaporte)
+        NumDoc = Cells(i, 2).Value   ' Col B: Número Documento
+        Pais = Cells(i, 3).Value     ' Col C: País (9238=Perú, 604=otros)
+        Categoria = Cells(i, 4).Value ' Col D: Categoría (1=Trab, 2=Pensionista, etc)
+        TRegistro = Cells(i, 5).Value ' Col E: Tipo Registro (Siempre 1)
+        FInicio = Format(Cells(i, 6).Value, "dd/mm/yyyy") ' Col F: Fecha Inicio (ALTA)
+        ' Col G: Fecha Fin se deja vacía para ALTAS
+        ' Col H: Motivo se deja vacío para ALTAS
+        EPS = Cells(i, 9).Value      ' Col I: EPS (si aplica, sino vacío)
+        
+        ' --- REGLAS DE VALIDACIÓN SEGÚN SUNAT ---
+        
+        ' Si es DNI (01), el país debe ir vacío obligatoriamente
+        If TD = "01" Then Pais = ""
+        
+        ' Si es Pasaporte (07) o CE (04) y no tiene país, asignar Perú por defecto
+        If (TD = "07" Or TD = "04") And Pais = "" Then Pais = "604"
+        
+        ' Si no se especifica EPS, dejar vacío
+        If EPS = "" Or IsEmpty(EPS) Then EPS = ""
+        
+        ' Construcción de la línea (Estructura 11)
+        ' Formato para ALTA: TD|NumDoc|Pais|Cat|TReg|F.Inicio|F.Fin(vacío)|Motivo(vacío)|EPS|
+        Linea = TD & "|" & _
+                NumDoc & "|" & _
+                Pais & "|" & _
+                Categoria & "|" & _
+                TRegistro & "|" & _
+                FInicio & "|" & _
+                "|" & _
+                "|" & _
+                EPS & "|"
+        
+        Print #1, Linea
+    Next i
+    
+    Close #1
+    
+    MsgBox "¡Archivo de ALTAS generado correctamente!" & vbCrLf & _
+           "Ubicación: " & Ruta & vbCrLf & _
+           "Total registros: " & (UltimaFila - 1) & vbCrLf & _
+           "Ahora cárgalo en el PVS T-Registro.", vbInformation
+End Sub

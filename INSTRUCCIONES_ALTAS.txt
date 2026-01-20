@@ -1,0 +1,91 @@
+PLANTILLA PARA ALTAS MASIVAS - SUNAT T-Registro
+================================================================
+
+ESTRUCTURA DE COLUMNAS EN EXCEL:
+---------------------------------
+
+| A: TipoDoc | B: NumDoc  | C: Pais | D: Categ | E: TReg | F: FechaInicio | G: FechaFin | H: Motivo | I: EPS |
+|------------|------------|---------|----------|---------|----------------|-------------|-----------|--------|
+| 01         | 12345678   |         | 1        | 1       | 01/02/2026     |             |           |        |
+| 04         | 001234567  | 604     | 1        | 1       | 15/01/2026     |             |           |        |
+| 07         | ABC123456  | 604     | 1        | 1       | 10/01/2026     |             |           | 001    |
+
+
+CÓDIGOS IMPORTANTES:
+====================
+
+TIPO DE DOCUMENTO (Col A):
+- 01 = DNI (Peruanos)
+- 04 = Carné de Extranjería
+- 07 = Pasaporte
+- 11 = PTP (Permiso Temporal de Permanencia)
+- 12 = Carné de Solicitante de Refugio
+
+PAÍS (Col C):
+- VACÍO = Para DNI (obligatorio dejarlo vacío)
+- 604 = Perú (para extranjeros con CE o Pasaporte)
+- Otros códigos según tabla SUNAT
+
+CATEGORÍA (Col D):
+- 1 = Trabajador activo
+- 2 = Pensionista
+- 3 = Personal en formación
+- 4 = Personal en prácticas
+- 5 = Otros
+
+TIPO DE REGISTRO (Col E):
+- Siempre usar: 1
+
+FECHA INICIO (Col F):
+- Formato: dd/mm/yyyy
+- Ejemplo: 01/02/2026
+- OBLIGATORIO para ALTAS
+
+FECHA FIN (Col G):
+- DEJAR VACÍO para ALTAS
+
+MOTIVO (Col H):
+- DEJAR VACÍO para ALTAS
+
+EPS (Col I):
+- Código de EPS si aplica (001, 002, etc.)
+- Dejar vacío si no tiene EPS
+
+
+INSTRUCCIONES DE USO:
+=====================
+
+1. Abre Excel y crea una nueva hoja
+2. En la fila 1 coloca los encabezados (A: TipoDoc, B: NumDoc, etc.)
+3. Desde la fila 2 en adelante, llena los datos del personal a dar de ALTA
+4. Presiona ALT + F11 para abrir el editor VBA
+5. Inserta un nuevo módulo: Insert > Module
+6. Copia y pega el código de la macro
+7. Modifica el RUC en la línea: RUC = "20100089051"
+8. Cierra el editor VBA
+9. Ejecuta la macro: ALT + F8, selecciona "GenerarArchivoAlta_Final" y clic en Ejecutar
+10. El archivo RP_RUC.per se generará en la misma carpeta del Excel
+
+IMPORTANTE:
+- Verifica que las fechas estén en formato de fecha de Excel
+- Los DNI NO deben tener país
+- Los CE y Pasaportes SÍ deben tener país
+- La fecha de inicio es OBLIGATORIA para altas
+- NO llenes fecha fin ni motivo para altas
+
+
+DIFERENCIAS ENTRE ALTAS Y BAJAS:
+=================================
+
+ALTAS:
+✓ Columna F (Fecha Inicio): SE LLENA
+✓ Columna G (Fecha Fin): SE DEJA VACÍA
+✓ Columna H (Motivo): SE DEJA VACÍO
+
+BAJAS:
+✓ Columna F (Fecha Inicio): SE DEJA VACÍA
+✓ Columna G (Fecha Fin): SE LLENA
+✓ Columna H (Motivo): SE LLENA (01-08)
+
+
+¡Éxito con tus cargas masivas!
